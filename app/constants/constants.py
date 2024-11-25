@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass
 
-from dotenv import dotenv_values, load_dotenv
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -35,13 +35,15 @@ class Constant:
     FULL_AMOUNT_GT = 0
 
 
+SCOPES = [
+    os.getenv('AUTH_SPEEEDSHEETS_URL'),
+    os.getenv('DRIVE_URL'),
+]
+
+
 @dataclass
 class ConstantGoogle:
 
-    SCOPES = [
-        os.getenv('AUTH_SPEEEDSHEETS_URL'),
-        os.getenv('DRIVE_URL'),
-    ]
     GET_SPEEEDSHEETS_URL: str = os.getenv('GET_SPEEEDSHEETS_URL', '')
 
     LOCALE = 'ru_RU'
@@ -58,7 +60,6 @@ class ConstantGoogle:
 
     MAJOR_DIMENSION = 'ROWS'
     VALUE_INPUT_OPTION = 'USER_ENTERED'
-    PRIVATE_KEY = dotenv_values(Constant.NAME_FILE_ENV)['PRIVATE_KEY']
 
 
 @dataclass
@@ -73,7 +74,3 @@ class Endpoints:
     DONATION = '/donation'
     GOOGLE = '/google'
     GOOGLE_LAST = '/last'
-
-
-# Для тестов.
-SCOPES = ConstantGoogle.SCOPES
