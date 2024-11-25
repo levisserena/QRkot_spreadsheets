@@ -35,16 +35,12 @@ class Constant:
     FULL_AMOUNT_GT = 0
 
 
-SCOPES = [
-    os.getenv('AUTH_SPEEEDSHEETS_URL'),
-    os.getenv('DRIVE_URL'),
-]
-
-
 @dataclass
 class ConstantGoogle:
 
-    GET_SPEEEDSHEETS_URL: str = os.getenv('GET_SPEEEDSHEETS_URL', '')
+    AUTH_SPEEEDSHEETS_URL = 'https://www.googleapis.com/auth/spreadsheets'
+    DRIVE_URL = 'https://www.googleapis.com/auth/drive'
+    GET_SPEEEDSHEETS_URL = 'https://docs.google.com/spreadsheets/d/'
 
     LOCALE = 'ru_RU'
     SHEET_TYPE = 'GRID'

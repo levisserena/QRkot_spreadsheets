@@ -1,7 +1,7 @@
 from aiogoogle import Aiogoogle
 from aiogoogle.auth.creds import ServiceAccountCreds
 
-from app.constants.constants import SCOPES
+from app.constants import ConstantGoogle
 from app.core.config import settings
 
 INFO = {
@@ -16,6 +16,11 @@ INFO = {
     'auth_provider_x509_cert_url': settings.auth_provider_x509_cert_url,
     'client_x509_cert_url': settings.client_x509_cert_url
 }
+
+SCOPES = [
+    ConstantGoogle.AUTH_SPEEEDSHEETS_URL,
+    ConstantGoogle.DRIVE_URL,
+]
 
 cred = ServiceAccountCreds(scopes=SCOPES, **INFO)
 
