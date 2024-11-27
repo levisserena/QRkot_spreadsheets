@@ -31,10 +31,7 @@ async def create_charity_project(
         charity_project, session
     )
     update_donation = await donation_crud.get_fully_invested_is_false(session)
-    result_investment = investment_process(
-        new_charity_project, update_donation
-    )
-    session.add_all(result_investment)
+    investment_process(new_charity_project, update_donation)
     await session.commit()
     await session.refresh(new_charity_project)
     return new_charity_project

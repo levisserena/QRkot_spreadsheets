@@ -1,4 +1,6 @@
-from sqlalchemy import select
+from datetime import timedelta
+
+from sqlalchemy import extract, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.constants import Constant
@@ -14,15 +16,19 @@ class CRUDCharityProject(CRUDBase, CRUDFullyInvestedMixin):
         количеству времени, которое понадобилось на сбор средств.
         От меньшего к большему."""
         db_project_completion = await session.execute(
-            select(self.model).where(
+            select(
+                self.model,
+                (extract('epoch', self.model.close_date) - extract(
+                    'epoch', self.model.create_date)).label('delta_date')
+            ).where(
                 self.model.fully_invested == Constant.True_
-            )
+            ).order_by('delta_date')
         )
         result = []
-        for instance in db_project_completion.scalars().all():
-            instance.delta_date = instance.close_date - instance.create_date
-            result.append(instance)
-        return sorted(result, key=lambda x: x.delta_date)
+        for project in db_project_completion.all():
+            project[0].delta_date = timedelta(seconds=project[1])
+            result.append(project[0])
+        return result
 
 
 charity_project_crud = CRUDCharityProject(CharityProject)

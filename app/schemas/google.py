@@ -10,8 +10,8 @@ class GoogleBase(BaseModel):
     name: Optional[str]
     id: Optional[str]
     kind: Optional[str]
-    mineType: Optional[str]
     url: Optional[str]
+    not_found_table: Optional[str]
 
     class Config:
 
@@ -19,7 +19,6 @@ class GoogleBase(BaseModel):
             'example': {
                 'id': Text.EXAMPLE_ID,
                 'kind': 'drive#file',
-                'mimeType': 'application/vnd.google-apps.spreadsheet',
                 'name': f'{Text.TITLE_TABLE_GOOGLE}17:04:52 11/24/24',
                 'url': (f'{ConstantGoogle.GET_SPEEEDSHEETS_URL}'
                         f'{Text.EXAMPLE_ID}'),

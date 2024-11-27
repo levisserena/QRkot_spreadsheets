@@ -115,3 +115,81 @@ async def delete_spreadsheet(fileId: str, wrapper_services: Aiogoogle) -> None:
     await wrapper_services.as_service_account(
         service.files.delete(fileId=fileId)
     )
+
+
+async def get_response_list_report(
+    wrapper_services: Aiogoogle
+) -> list[dict[str, str]]:
+    """Формирует список словарей с данными Google-таблиц проекта для ответа в
+    API.<br>
+    Содержание словарей:
+    - name - название таблицы;
+    - id - индетификационный номер таблицы;
+    - url - адрес таблицы;
+    - kind - определяет, что это за ресурс,
+    значение: фиксированная строка "drive#fileList".
+    """
+    response = await get_spreadsheets(wrapper_services)
+    response = [file_table for file_table in response['files'] if (
+        Text.APP_TITLE in file_table['name']
+    )]
+    for file_table in response:
+        file_table['url'] = (
+            f'{ConstantGoogle.GET_SPEEEDSHEETS_URL}{file_table["id"]}'
+        )
+    return response
+
+
+async def get_response_last_report(
+    wrapper_services: Aiogoogle
+) -> dict[str, str]:
+    """Вернет словарь с данными последнего созданный отчет Google-таблицу.<br>
+    Содержание словаря:
+    - name - название таблицы;
+    - id - индетификационный номер таблицы;
+    - url - адрес таблицы;
+    - kind - определяет, что это за ресурс,
+    значение: фиксированная строка "drive#fileList".
+    """
+    reports = await get_response_list_report(wrapper_services)
+    return ConstantGoogle.NOT_FOUND_TABLE if not reports else (
+        reports[ConstantGoogle.INDEX_LAST_TABLE]
+    )
+
+
+async def delete_old_reports(
+    wrapper_services: Aiogoogle
+) -> list[dict[str, str]]:
+    """Удалит старые Google-таблицы данного проекта.
+    Вернет список словарей с данными удаленных Google-таблиц.<br>
+    Содержание словарей:
+    - name - название таблицы;
+    - id - индетификационный номер таблицы;
+    - url - адрес таблицы;
+    - kind - определяет, что это за ресурс,
+    значение: фиксированная строка "drive#fileList".
+    """
+    reports = await get_response_list_report(wrapper_services)
+    if reports:
+        reports.pop(ConstantGoogle.INDEX_LAST_TABLE)
+    for spreadsheet in reports:
+        await delete_spreadsheet(spreadsheet['id'], wrapper_services)
+    return reports
+
+
+async def delete_last_report(wrapper_services):
+    """Удалит последнюю Google-таблицу данного проекта.
+    Вернет словарь с данными последнего созданный отчет Google-таблицу.<br>
+    Содержание словаря:
+    - name - название таблицы;
+    - id - индетификационный номер таблицы;
+    - url - адрес таблицы;
+    - kind - определяет, что это за ресурс,
+    значение: фиксированная строка "drive#fileList".
+    """
+    reports = await get_response_list_report(wrapper_services)
+    if reports:
+        last_report = reports.pop(ConstantGoogle.INDEX_LAST_TABLE)
+        await delete_spreadsheet(last_report['id'], wrapper_services)
+        return last_report
+    return ConstantGoogle.NOT_FOUND_TABLE

@@ -57,6 +57,9 @@ class ConstantGoogle:
     MAJOR_DIMENSION = 'ROWS'
     VALUE_INPUT_OPTION = 'USER_ENTERED'
 
+    INDEX_LAST_TABLE = 0
+    NOT_FOUND_TABLE = {'not_found_table': 'Нет таблицы.'}
+
 
 @dataclass
 class Endpoints:
